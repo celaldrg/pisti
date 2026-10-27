@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pişti · Turkish card game</title>
+  <meta name="description" content="Play Pişti, the classic Turkish card game, against the computer in your browser. Two computer levels, English and Turkish, works on phones. Free and open source.">
+  <meta name="theme-color" content="#0f172a">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pişti">
+  <meta property="og:description" content="Play Pişti, the classic Turkish card game, against the computer in your browser.">
+  <meta property="og:url" content="https://celaldrg.github.io/pisti/">
+  <meta property="og:image" content="https://celaldrg.github.io/pisti/docs/screenshot.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='9' y='3' width='46' height='58' rx='9' fill='%23fb7185'/%3E%3Cpath transform='translate(14 13) scale(.36)' fill='%230f172a' d='M50 6C54 14 92 38 94 60C95 75 84 84 72 84C64 84 57 80 53 74C54 84 58 91 66 96L34 96C42 91 46 84 47 74C43 80 36 84 28 84C16 84 5 75 6 60C8 38 46 14 50 6Z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="suit-C" viewBox="0 0 100 100">
+      <circle cx="50" cy="28" r="21" fill="currentColor"/>
+      <circle cx="27" cy="58" r="21" fill="currentColor"/>
+      <circle cx="73" cy="58" r="21" fill="currentColor"/>
+      <circle cx="50" cy="50" r="11" fill="currentColor"/>
+      <path fill="currentColor" d="M47 52L53 52C54 74 58 87 68 96L32 96C42 87 46 74 47 52Z"/>
+    </symbol>
+    <symbol id="suit-D" viewBox="0 0 100 100">
+      <path fill="currentColor" d="M50 4C60 22 72 37 88 50C72 63 60 78 50 96C40 78 28 63 12 50C28 37 40 22 50 4Z"/>
+    </symbol>
+    <symbol id="suit-H" viewBox="0 0 100 100">
+      <path fill="currentColor" d="M50 92C46 87 7 63 6 36C5 20 15 8 29 8C39 8 46 14 50 24C54 14 61 8 71 8C85 8 95 20 94 36C93 63 54 87 50 92Z"/>
+    </symbol>
+    <symbol id="suit-S" viewBox="0 0 100 100">
+      <path fill="currentColor" d="M50 5C54 14 92 38 94 60C95 75 84 84 72 84C64 84 57 80 53 74C54 84 58 91 66 96L34 96C42 91 46 84 47 74C43 80 36 84 28 84C16 84 5 75 6 60C8 38 46 14 50 5Z"/>
+    </symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <rect x="5" y="8" width="19" height="27" rx="4" transform="rotate(-14 14.5 21.5)" fill="#334155"/>
+        <rect x="15" y="5" width="19" height="27" rx="4" transform="rotate(9 24.5 18.5)" fill="#fb7185"/>
+        <use href="#suit-S" x="18.5" y="11.5" width="13" height="13" color="#0f172a"/>
+      </svg>
+      <h1 data-i18n="appName">Pişti</h1>
+    </div>
+    <nav class="actions">
+      <button type="button" class="btn" id="rules-button" data-i18n="rules">Rules</button>
+      <button type="button" class="btn btn-primary" id="new-button" data-i18n="newMatch">New match</button>
+      <button type="button" class="btn btn-lang" id="lang-button" data-i18n="langButton" data-i18n-label="langSwitch" aria-label="TR: switch to Turkish">TR</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="felt" id="felt" aria-label="Card table" data-i18n-label="tableLabel">
+      <div class="seat seat-cpu" id="seat-cpu">
+        <div class="seat-info">
+          <span class="seat-name" data-i18n="computer">Computer</span>
+          <span class="seat-score" id="cpu-score">0</span>
+        </div>
+        <div class="hand hand-cpu" id="cpu-hand" role="img"></div>
+        <div class="capture" id="cpu-capture" role="img"></div>
+      </div>
+
+      <div class="middle">
+        <div class="deck" id="deck" role="img"></div>
+        <div class="pile-area">
+          <div class="pile" id="pile" role="img"></div>
+          <span class="zone-label" id="pile-count"></span>
+          <div class="burst-layer" id="burst-layer" aria-live="polite"></div>
+        </div>
+        <div class="status">
+          <span class="status-meta" id="status-meta"></span>
+          <strong class="status-text" id="status-text" aria-live="polite"></strong>
+          <span class="status-hint" id="status-hint"></span>
+          <button type="button" class="btn btn-primary" id="status-action" hidden></button>
+        </div>
+      </div>
+
+      <div class="seat seat-you" id="seat-you">
+        <div class="seat-info">
+          <span class="seat-name" data-i18n="you">You</span>
+          <span class="seat-score" id="your-score">0</span>
+        </div>
+        <div class="hand hand-you" id="your-hand" role="group" tabindex="-1"></div>
+        <div class="capture" id="your-capture" role="img"></div>
+      </div>
+
+      <p class="toast" id="toast" role="status"></p>
+    </section>
+
+    <aside class="panel">
+      <section class="box">
+        <div class="box-head">
+          <h2 data-i18n="match">Match</h2>
+          <span class="box-meta" id="match-meta"></span>
+        </div>
+        <div class="score-line">
+          <span data-i18n="you">You</span>
+          <b id="panel-you">0</b>
+          <span class="bar"><i id="bar-you"></i></span>
+        </div>
+        <div class="score-line is-cpu">
+          <span data-i18n="computer">Computer</span>
+          <b id="panel-cpu">0</b>
+          <span class="bar"><i id="bar-cpu"></i></span>
+        </div>
+      </section>
+      <section class="box">
+        <div class="box-head">
+          <h2 data-i18n="thisRound">This round</h2>
+          <span class="box-meta" id="round-title"></span>
+        </div>
+        <table class="tally">
+          <thead>
+            <tr><td></td><th scope="col" data-i18n="you">You</th><th scope="col" data-i18n="computer">Computer</th></tr>
+          </thead>
+          <tbody id="tally-body"></tbody>
+        </table>
+      </section>
+      <section class="box">
+        <div class="box-head">
+          <h2 data-i18n="rounds">Rounds</h2>
+        </div>
+        <ol class="history" id="history"></ol>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span data-i18n="footerLicense">MIT</span> ·
+    <a href="https://github.com/celaldrg/pisti" data-i18n="footerSource">Source on GitHub</a>
+  </footer>
+
+  <dialog class="dialog" id="summary-dialog" aria-labelledby="summary-title">
+    <h2 class="dialog-title" id="summary-title"></h2>
+    <div class="dialog-body">
+      <p class="headline" id="summary-headline"></p>
+      <table class="breakdown">
+        <thead>
+          <tr><td></td><th scope="col" data-i18n="you">You</th><th scope="col" data-i18n="computer">Computer</th></tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+      </table>
+      <p class="match-line" id="summary-match"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="btn" data-close data-i18n="close">Close</button>
+      <button type="button" class="btn btn-primary" id="summary-next" autofocus></button>
+    </div>
+  </dialog>
+
+  <dialog class="dialog dialog-wide" id="rules-dialog" aria-labelledby="rules-title">
+    <h2 class="dialog-title" id="rules-title" data-i18n="rulesTitle">How to play Pişti</h2>
+    <div class="dialog-body rules-body" id="rules-body" role="region" aria-labelledby="rules-title" tabindex="0"></div>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-primary" data-close data-i18n="close" autofocus>Close</button>
+    </div>
+  </dialog>
+
+  <dialog class="dialog" id="new-dialog" aria-labelledby="new-title">
+    <form method="dialog">
+      <h2 class="dialog-title" id="new-title" data-i18n="newMatch">New match</h2>
+      <label class="field">
+        <span data-i18n="targetLabel">Target score</span>
+        <select id="target-select"></select>
+      </label>
+      <label class="field">
+        <span data-i18n="levelLabel">Computer level</span>
+        <select id="level-select"></select>
+      </label>
+      <p class="note" data-i18n="newMatchNote">The current match ends when the new one starts.</p>
+      <div class="dialog-actions">
+        <button type="submit" class="btn" value="cancel" data-i18n="cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" value="start" data-i18n="start" autofocus>Start</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="flights" id="flights" aria-hidden="true"></div>
+</body>
+</html>
