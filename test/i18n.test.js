@@ -98,6 +98,14 @@ test('card names in both languages', () => {
   assert.equal(tr.card(parseCard('7H')), 'kupa 7');
 });
 
+test('corner indices follow the language', () => {
+  const en = createTranslator('en');
+  const tr = createTranslator('tr');
+  const ids = ['AS', '10D', 'JC', 'QH', 'KS'];
+  assert.deepEqual(ids.map((id) => en.rank(parseCard(id))), ['A', '10', 'J', 'Q', 'K']);
+  assert.deepEqual(ids.map((id) => tr.rank(parseCard(id))), ['A', '10', 'V', 'K', 'P']);
+});
+
 test('the rules have the same sections in both languages, with every number filled in', () => {
   const params = { target: 101, pisti: 10, jackPisti: 20, majority: 3 };
   const [english, ...others] = translators.map((tr) => tr.rules(params));

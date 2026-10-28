@@ -202,7 +202,7 @@ function createStage(token) {
     },
     spot: (key) => (live() ? table.spotOf(key) : null),
     pileSpots: () => (live() ? table.pileSpots() : []),
-    fly: (flight) => (live() && flight.from && flight.to ? flyCard(dom.flights, flight) : Promise.resolve()),
+    fly: (flight) => (live() && flight.from && flight.to ? flyCard(dom.flights, flight, app.tr.rank) : Promise.resolve()),
     setDeckCount(count) {
       if (live()) table.setDeckCount(count, app.tr);
     },

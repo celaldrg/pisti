@@ -170,16 +170,22 @@ const STRINGS = {
   },
 };
 
-/** Card names: the rank names cover the letter cards; number cards keep their number. */
+/**
+ * Card names: the rank names cover the letter cards; number cards keep their number.
+ * The indices are the letters printed in a card's corners where they differ from the rank
+ * (Turkish decks use V for vale, K for kız and P for papaz).
+ */
 const CARD_NAMES = {
   en: {
     pattern: '{rank} of {suit}',
     ranks: { A: 'ace', J: 'jack', Q: 'queen', K: 'king' },
+    indices: {},
     suits: { C: 'clubs', D: 'diamonds', H: 'hearts', S: 'spades' },
   },
   tr: {
     pattern: '{suit} {rank}',
     ranks: { A: 'ası', J: 'valesi', Q: 'kızı', K: 'papazı' },
+    indices: { J: 'V', Q: 'K', K: 'P' },
     suits: { C: 'sinek', D: 'karo', H: 'kupa', S: 'maça' },
   },
 };
@@ -253,6 +259,7 @@ const RULES = {
  * @property {(key: string, n: number, params?: Record<string, string|number>) => string} plural
  *   The "_one" or "_other" form of a key for the count n, which fills {n}.
  * @property {(card: Card) => string} card A card's name, e.g. "queen of spades" or "maça kızı".
+ * @property {(card: Card) => string} rank The letter or number in a card's corners, e.g. "Q" or "K" for a queen.
  * @property {(params: Record<string, string|number>) => RulesSection[]} rules The rules text.
  */
 
@@ -272,6 +279,7 @@ export function createTranslator(lang) {
     t,
     plural: (key, n, params = {}) => t(`${key}_${pluralRules.select(n) === 'one' ? 'one' : 'other'}`, { ...params, n }),
     card: (card) => fill(names.pattern, { rank: names.ranks[card.rank] ?? card.rank, suit: names.suits[card.suit] }),
+    rank: (card) => names.indices[card.rank] ?? card.rank,
     rules: (params) => RULES[code].map(({ title, items }) => ({ title, items: items.map((item) => fill(item, params)) })),
   };
 }

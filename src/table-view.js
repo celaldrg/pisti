@@ -69,7 +69,7 @@ export function createTableView(zones) {
       'aria-label': tr.t('playCard', { card: tr.card(card) }),
       'aria-disabled': String(!canPlay),
     }, [
-      track(card.id, cardFace(card), { inHand: true }),
+      track(card.id, cardFace(card, tr.rank(card)), { inHand: true }),
       el('span', { class: 'key-hint', 'aria-hidden': 'true', text: i + 1 }),
     ])));
   }
@@ -83,7 +83,7 @@ export function createTableView(zones) {
     const first = Math.max(0, pile.length - PILE_SHOWN);
     zones.pile.replaceChildren(...pile.slice(first).map((card, i) => {
       const faceUp = first + i >= faceDown;
-      const node = faceUp ? cardFace(card) : cardBack();
+      const node = faceUp ? cardFace(card, tr.rank(card)) : cardBack();
       const { x, y, r } = scatter(card.id);
       node.setAttribute('style', `--x:${x}px;--y:${y}px;--r:${r}deg`);
       return track(card.id, node, { r, pile: { card, faceUp } });

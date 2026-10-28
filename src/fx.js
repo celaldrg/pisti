@@ -48,11 +48,12 @@ export function wait(ms) {
  * page, turning it over on the way when asked.
  * @param {HTMLElement} layer The fixed overlay for flying cards.
  * @param {Flight} flight
+ * @param {(card: Card) => string} rankLabel The rank as printed in the current language.
  * @returns {Promise<void>} Resolves when the card has landed.
  */
-export async function flyCard(layer, { card, from, to, faceUpFrom, faceUpTo }) {
+export async function flyCard(layer, { card, from, to, faceUpFrom, faceUpTo }, rankLabel) {
   if (!motionOk()) return;
-  const inner = el('div', { class: 'ghost-inner' }, [card && cardFace(card), cardBack()]);
+  const inner = el('div', { class: 'ghost-inner' }, [card && cardFace(card, rankLabel(card)), cardBack()]);
   const ghost = el('div', { class: 'ghost', style: `--w:${to.w}px` }, [inner]);
   layer.append(ghost);
   const top = {
